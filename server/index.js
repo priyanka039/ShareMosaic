@@ -14,11 +14,6 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mini-twit
 app.use(cors());
 app.use(express.json());
 
-app.use((req, res, next) => {
-  req.user = 'Anonymous'; // Simulated auth
-  next();
-});
-
 app.use('/', noteRoutes);
 
 const PORT = process.env.PORT || 5000;
