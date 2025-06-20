@@ -3,7 +3,7 @@ import axios from 'axios';
 import './App.css';
 
 const API = 'http://localhost:5000';
-const PROJECT = 'Growth Mosaic';
+const PROJECT = 'Share Mosaic';
 
 function App() {
   const [notes, setNotes] = useState([]);
