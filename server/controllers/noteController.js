@@ -42,6 +42,31 @@ exports.getStats = async (req, res) => {
   }
 };
 
+
+// Calculate reflection streak for an author
+exports.getStreak = async (req, res) => {
+  const { author } = req.query;
+  if (!author) return res.status(400).json({ error: 'Author is required' });
+
+  try {
+    const notes = await Note.find({ author }).sort({ createdAt: -1 });
+    const daysSet = new Set(notes.map(note => new Date(note.createdAt).toDateString()));
+
+    let streak = 0;
+    let today = new Date();
+    for (;;) {
+      if (daysSet.has(today.toDateString())) {
+        streak++;
+        today.setDate(today.getDate() - 1);
+      } else break;
+    }
+
+    res.json({ author, streak });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // Like a note
 exports.likeNote = async (req, res) => {
   const { id } = req.params;
