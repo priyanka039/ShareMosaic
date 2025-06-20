@@ -2,21 +2,41 @@ const Note = require('../models/note');
 
 // Create a new note
 exports.createNote = async (req, res) => {
-  const { content, author } = req.body;
+  const { title, content, author } = req.body;
   try {
-    const note = new Note({ content, author });
+    const note = new Note({ title, content, author });
     await note.save();
     res.status(201).json({ message: `Note created by ${author}`, note });
   } catch (error) {
-    res.status(500).json({ error: `Failed to create note: ${error.message}` });
+    res.status(500).json({ error: error.message });
   }
 };
 
-// Get all notes
+// Get notes with pagination
 exports.getNotes = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 8;
   try {
-    const notes = await Note.find().sort({ createdAt: -1 });
-    res.json(notes);
+    const total = await Note.countDocuments();
+    const notes = await Note.find()
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+    res.json({ notes, total, page, pages: Math.ceil(total / limit) });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// Get analytics
+exports.getStats = async (req, res) => {
+  try {
+    const total = await Note.countDocuments();
+    const avgLikesAgg = await Note.aggregate([
+      { $group: { _id: null, avgLikes: { $avg: '$likes' } } }
+    ]);
+    const avgLikes = avgLikesAgg[0]?.avgLikes || 0;
+    res.json({ totalNotes: total, averageLikes: avgLikes.toFixed(2) });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
