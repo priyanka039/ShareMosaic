@@ -13,7 +13,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/mini-twit
 
 app.use(cors());
 app.use(express.json());
-
+ 
 app.use('/', noteRoutes);
 
 const PORT = process.env.PORT || 5000;

@@ -106,7 +106,7 @@ function App() {
 
   return (
     <>
-      <h1>{PROJECT}</h1>
+      <h1 className='heading'><strong>{PROJECT}</strong></h1>
       <p className="tagline">{PROJECT} — "{stats.totalNotes} reflections and counting."</p>
 
       {streak > 0 && (
